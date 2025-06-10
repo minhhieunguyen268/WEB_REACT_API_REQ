@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { Table, Button, Modal, Layout, notification, Form } from "antd";
-import { getUsers, createUser, updateUser, deleteUser } from "../../api/login-api";
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  deleteUser,
+} from "../../api/login-api";
 import UserForm from "../../components/UserForm";
 import SideBar from "../../components/SideBar";
 import type { User } from "../../interfaces/interfaces";
@@ -8,24 +13,14 @@ import type { User } from "../../interfaces/interfaces";
 const { Content, Footer } = Layout;
 
 export default function HomePage() {
-  const [users, setUsers] = useState<User[]>([]); // Use User[] here
+  const [users, setUsers] = useState<User[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newUser, setNewUser] = useState<User | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await getUsers(2);
-        setUsers(data.data); // data.data should be User[]
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
@@ -78,14 +73,23 @@ export default function HomePage() {
     },
   ];
 
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers(2);
+      setUsers(data.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
   const editUser = (user: User) => {
-    setEditingUser(user);
+    setNewUser(user);
     setIsEditModalVisible(true);
   };
 
   const handleCancel = () => {
     if (isEditModalVisible) {
-      setEditingUser(null);
+      setNewUser(null);
       setIsEditModalVisible(false);
       form.resetFields();
     }
@@ -93,27 +97,23 @@ export default function HomePage() {
     if (isModalVisible) {
       setIsModalVisible(false);
       form.resetFields();
-      setNewUser({ name: "", job: "" });
     }
   };
 
-  const handleCreateUser = async (value: any) => {
+  const handleCreateUser = async (value: User) => {
     try {
-      console.log(value);
-
       const response = await createUser(value);
-      const data = await getUsers(2);
+      fetchUsers();
       if (response.status === 201) {
         notification.success({
           message: "User Created",
           description: "The user has been successfully created!",
           placement: "topRight",
         });
-        setUsers(data.data);
+
         handleCancel();
       }
     } catch (err) {
-      console.error("Error creating user:", err);
       notification.error({
         message: "Error Creating User",
         description: "There was an error creating the user.",
@@ -122,21 +122,8 @@ export default function HomePage() {
     }
   };
 
-  const handleUpdateUser = async (value: any) => {
-  if (!editingUser?.id) {
-    notification.error({
-      message: "Invalid User ID",
-      description: "The user ID is missing or invalid.",
-      placement: "topRight",
-    });
-    return;
-  }
-
-    try {
-    console.log(value);
-
-    // Ensure the ID exists and is valid
-    if (!editingUser?.id) {
+  const handleUpdateUser = async (value: User) => {
+    if (!newUser?.id) {
       notification.error({
         message: "Invalid User ID",
         description: "The user ID is missing or invalid.",
@@ -145,63 +132,55 @@ export default function HomePage() {
       return;
     }
 
-    await updateUser(editingUser!.id, value);
-
-    
-    const data = await getUsers(2);
-    setUsers(data.data);
-
-    // Reset the edit modal and form
-    setEditingUser(null);
-    setIsEditModalVisible(false);
-    notification.success({
-      message: "User Updated",
-      description: "The user has been successfully updated!",
-      placement: "topRight",
-    });
-    form.resetFields();
-    setNewUser({ name: "", job: "" });
-  } catch (err) {
-    console.error("Error updating user:", err);
-    notification.error({
-      message: "Error Updating User",
-      description: "There was an error updating the user.",
-      placement: "topRight",
-    });
-  }
-};
-
-
-  const handleDeleteUser = async (id: number | undefined) => {
-  if (typeof id !== "number") {
-    notification.error({
-      message: "Invalid User ID",
-      description: "The user ID is missing or invalid.",
-      placement: "topRight",
-    });
-    return;
-  }
-
-  try {
-    const status = await deleteUser(id);
-    if (status === 204) {
-      const data = await getUsers(2);
-      setUsers(data.data);
+    try {
+      const response = await updateUser(newUser!.id, value);
+      fetchUsers();
+      if (response.status === 200) {
       notification.success({
-        message: "User Deleted",
-        description: "The user has been successfully deleted!",
+        message: "User Updated",
+        description: "The user has been successfully updated!",
+        placement: "topRight",
+      });
+      
+      handleCancel();
+    }
+    } catch (err) {
+      notification.error({
+        message: "Error Updating User",
+        description: "There was an error updating the user.",
         placement: "topRight",
       });
     }
-  } catch (err) {
-    console.error("Error deleting user:", err);
-    notification.error({
-      message: "Error Deleting User",
-      description: "There was an error deleting the user.",
-      placement: "topRight",
-    });
-  }
-};
+  };
+
+  const handleDeleteUser = async (id: number | undefined) => {
+    if (typeof id !== "number") {
+      notification.error({
+        message: "Invalid User ID",
+        description: "The user ID is missing or invalid.",
+        placement: "topRight",
+      });
+      return;
+    }
+
+    try {
+      const status = await deleteUser(id);
+      fetchUsers();
+      if (status === 204) {
+        notification.success({
+          message: "User Deleted",
+          description: "The user has been successfully deleted!",
+          placement: "topRight",
+        });
+      }
+    } catch (err) {
+      notification.error({
+        message: "Error Deleting User",
+        description: "There was an error deleting the user.",
+        placement: "topRight",
+      });
+    }
+  };
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -209,7 +188,7 @@ export default function HomePage() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <SideBar collapsed={collapsed} toggleSidebar={toggleSidebar} />
+      <SideBar collapseds={collapsed} toggleSidebar={toggleSidebar} />
       <Layout>
         <Content style={{ padding: "50px" }}>
           <div
@@ -255,8 +234,8 @@ export default function HomePage() {
           footer={null}
         >
           <UserForm
-            user={editingUser}
-            setUser={setEditingUser}
+            user={newUser}
+            setUser={setNewUser}
             onSubmit={handleUpdateUser}
             isEditMode={true}
             form={form}

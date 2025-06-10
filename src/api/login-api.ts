@@ -81,16 +81,16 @@ export const createUser = async (userData: User): Promise<AxiosResponse<User>> =
   return response;
 };
 
-export const updateUser = async (id: number, userData: User): Promise<User> => {
+export const updateUser = async (id: number, userData: User): Promise<AxiosResponse<User>> => {
   const headers = {
     "x-api-key": "reqres-free-v1",
   };
-  const response: AxiosResponse<User> = await axios.put(`${reqresApiUrl}/users/${id}`, userData, {
+  const response: AxiosResponse<User, any> = await axios.put(`${reqresApiUrl}/users/${id}`, userData, {
     headers,
   });
   console.log(`URL ${reqresApiUrl}/users/${id}`);
   console.log("User updated successfully:", response.data);
-  return response.data;
+  return response;
 };
 
 export const deleteUser = async (id: number): Promise<number> => {

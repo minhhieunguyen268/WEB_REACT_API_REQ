@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { login } from "../../api/login-api";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { notification } from "antd";
 import img1 from "../../style/images/draw2.png";
 
@@ -19,29 +19,18 @@ interface LoginResponse {
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   
   useEffect(() => {
     localStorage.removeItem("token");
-    const params = new URLSearchParams(location.search);
-    const emailFromQuery = params.get("email");
-    const passFromQuery = params.get("pass");
-    if (emailFromQuery && passFromQuery) {
-      setEmail(emailFromQuery);
-      setPassword(passFromQuery);
-    }
-  }, [location]);
+  }, []);
 
   const handleLogin = async () => {
     try {
-      setError(null);
       const result: LoginResponse = await login(email, password);
       localStorage.setItem("token", result.token);
-      console.log("Login successful:", result);
-      navigate("/home"); // Navigate to home after successful login
+      navigate("/home"); 
     } catch (err: any) {
       notification.error({
         message: "Login Failed",
@@ -68,13 +57,8 @@ const LoginForm: React.FC = () => {
           >
             <span className="login100-form-title">Member Login</span>
 
-            {error && (
-              <div style={{ color: "red", marginBottom: "10px" }}>{error}</div>
-            )}
-
             <div
               className="wrap-input100 validate-input"
-              data-validate="Valid email is required: ex@abc.xyz"
             >
               <input
                 className="input100"
@@ -83,7 +67,6 @@ const LoginForm: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
-                autoComplete="username"
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -93,7 +76,6 @@ const LoginForm: React.FC = () => {
 
             <div
               className="wrap-input100 validate-input"
-              data-validate="Password is required"
             >
               <input
                 className="input100"
@@ -101,7 +83,6 @@ const LoginForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                autoComplete="current-password"
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">

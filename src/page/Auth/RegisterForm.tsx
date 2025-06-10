@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { register } from "../../api/login-api"; // Assuming you have a login API
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { notification } from "antd";
-import { Link } from "react-router-dom";
 import img1 from "../../style/images/draw2.png"; // Ensure the image path is correct
 
 import "../../style/vendor/bootstrap/css/bootstrap.min.css";
@@ -42,7 +41,6 @@ const RegisterForm: React.FC = () => {
 
       navigate("/");
     } catch (err: any) {
-      console.log(err.response?.data?.error)
       notification.error({
         message: "Registration Failed",
         description: `${err.response?.data?.error || "An error occurred"}`,
@@ -63,18 +61,13 @@ const RegisterForm: React.FC = () => {
             className="login100-form validate-form"
             onSubmit={(e) => {
               e.preventDefault();
-              handleRegister(); 
+              handleRegister();
             }}
           >
             <span className="login100-form-title">Create Account</span>
 
-            {/* {error && (
-              <div style={{ color: "red", marginBottom: "100px" }}>{error}</div>
-            )} */}
-
             <div
               className="wrap-input100 validate-input"
-              data-validate="Valid email is required: ex@abc.xyz"
             >
               <input
                 className="input100"
@@ -83,7 +76,6 @@ const RegisterForm: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
-                autoComplete="username"
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -93,7 +85,6 @@ const RegisterForm: React.FC = () => {
 
             <div
               className="wrap-input100 validate-input"
-              data-validate="Password is required"
             >
               <input
                 className="input100"
@@ -101,7 +92,6 @@ const RegisterForm: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                autoComplete="new-password"
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -119,8 +109,6 @@ const RegisterForm: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm Password"
-                required
-                autoComplete="new-password"
               />
               <span className="focus-input100"></span>
               <span className="symbol-input100">
@@ -141,7 +129,6 @@ const RegisterForm: React.FC = () => {
                 Login here
                 <i
                   className="fa fa-long-arrow-right m-l-5"
-                  aria-hidden="true"
                 ></i>
               </Link>
             </div>
