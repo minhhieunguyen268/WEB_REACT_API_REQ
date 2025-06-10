@@ -6,7 +6,6 @@ const reqresApiUrl = "https://reqres.in/api";
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    console.log(email);
     const headers = {
       "x-api-key": "reqres-free-v1",
     };
@@ -15,13 +14,12 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       { email, password },
       { headers }
     );
-    console.log(response.data);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.log(e.message);
+      console.error("Error login user:", e.message);
     } else {
-      console.log("Unknown error:", e);
+      console.error("Error login user:", e);
     }
     throw e;
   }
@@ -58,7 +56,6 @@ export const getUsers = async (page = 2): Promise<GetUsersResponse> => {
       },
     });
 
-    console.log("Users data fetched successfully:", response.data);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof Error) {
@@ -77,7 +74,6 @@ export const createUser = async (userData: User): Promise<AxiosResponse<User>> =
   const response: AxiosResponse<User> = await axios.post(`${reqresApiUrl}/users`, userData, {
     headers,
   });
-  console.log("User data added successfully:", response.data);
   return response;
 };
 
@@ -88,8 +84,6 @@ export const updateUser = async (id: number, userData: User): Promise<AxiosRespo
   const response: AxiosResponse<User, any> = await axios.put(`${reqresApiUrl}/users/${id}`, userData, {
     headers,
   });
-  console.log(`URL ${reqresApiUrl}/users/${id}`);
-  console.log("User updated successfully:", response.data);
   return response;
 };
 
@@ -100,6 +94,5 @@ export const deleteUser = async (id: number): Promise<number> => {
   const response: AxiosResponse = await axios.delete(`${reqresApiUrl}/users/${id}`, {
     headers,
   });
-  console.log(`User ${id} deleted successfully, status: ${response.status}`);
   return response.status;
 };

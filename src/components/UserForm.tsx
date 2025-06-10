@@ -9,7 +9,7 @@ interface UserFormProps {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   onSubmit: (values: { name: string; job: string }) => void;
   isEditMode: boolean;
-  form: any; 
+  form: any;
 }
 
 const UserForm: React.FC<UserFormProps> = ({ user, setUser, onSubmit, isEditMode, form }) => {
