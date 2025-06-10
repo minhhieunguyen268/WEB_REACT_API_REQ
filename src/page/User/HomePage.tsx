@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Table, Button, Modal, Layout, notification, Form } from "antd";
+import { Table, Button, Modal, Layout, notification, Form, Space } from "antd";
 import {
   getUsers,
   createUser,
@@ -9,6 +9,7 @@ import {
 import UserForm from "../../components/UserForm";
 import SideBar from "../../components/SideBar";
 import type { User } from "../../interfaces/interfaces";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const { Content, Footer } = Layout;
 
@@ -19,6 +20,7 @@ export default function HomePage() {
   const [collapsed, setCollapsed] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -74,12 +76,14 @@ export default function HomePage() {
   ];
 
   const fetchUsers = async () => {
+    setIsLoading(true);
     try {
       const data = await getUsers(2);
       setUsers(data.data);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
+    setIsLoading(false);
   };
 
   const editUser = (user: User) => {
@@ -101,6 +105,7 @@ export default function HomePage() {
   };
 
   const handleCreateUser = async (value: User) => {
+    setIsLoading(true);
     try {
       const response = await createUser(value);
       fetchUsers();
@@ -119,6 +124,8 @@ export default function HomePage() {
         description: "There was an error creating the user.",
         placement: "topRight",
       });
+    } finally {
+    setIsLoading(false);  
     }
   };
 
@@ -132,6 +139,7 @@ export default function HomePage() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const response = await updateUser(newUser!.id, value);
       fetchUsers();
@@ -150,6 +158,8 @@ export default function HomePage() {
         description: "There was an error updating the user.",
         placement: "topRight",
       });
+    } finally {
+    setIsLoading(false); 
     }
   };
 
@@ -163,6 +173,7 @@ export default function HomePage() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const status = await deleteUser(id);
       fetchUsers();
@@ -179,6 +190,8 @@ export default function HomePage() {
         description: "There was an error deleting the user.",
         placement: "topRight",
       });
+    } finally {
+    setIsLoading(false); 
     }
   };
 
@@ -191,25 +204,16 @@ export default function HomePage() {
       <SideBar collapseds={collapsed} toggleSidebar={toggleSidebar} />
       <Layout>
         <Content style={{ padding: "50px" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <Space style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h1>Users List</h1>
             <Button type="primary" onClick={() => setIsModalVisible(true)}>
               Add User
             </Button>
-          </div>
+          </Space>
           <br />
-          <Table
-            columns={columns}
-            dataSource={users}
-            rowKey="id"
-            pagination={false}
-          />
+          
+        <Table columns={columns} dataSource={users} rowKey="id" pagination={false} />
+        <LoadingOverlay isLoading={isLoading} />
         </Content>
 
         <Modal

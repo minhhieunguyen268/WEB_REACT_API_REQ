@@ -19,8 +19,8 @@ const UserForm: React.FC<UserFormProps> = ({ user, setUser, onSubmit, isEditMode
         label="Name"
         name="name"
         rules={[{ required: true, message: "Please input the name!" }]}
-        labelCol={{ span: 24 }} // Ensure label takes full width
-        wrapperCol={{ span: 24 }} // Ensure input takes full width
+        labelCol={{ span: 24 }} 
+        wrapperCol={{ span: 24 }}
       >
         <Input
           placeholder="Name"
@@ -33,8 +33,8 @@ const UserForm: React.FC<UserFormProps> = ({ user, setUser, onSubmit, isEditMode
         label="Job"
         name="job"
         rules={[{ required: true, message: "Please input the job!" }]}
-        labelCol={{ span: 24 }} // Ensure label takes full width
-        wrapperCol={{ span: 24 }} // Ensure input takes full width
+        labelCol={{ span: 24 }} 
+        wrapperCol={{ span: 24 }} 
       >
         <Input
           placeholder="Job"
