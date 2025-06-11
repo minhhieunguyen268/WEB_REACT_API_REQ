@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { login } from "../../api/login-api";
 import { useNavigate, Link } from "react-router-dom";
 import { notification } from "antd";
 import img1 from "../../style/images/draw2.png";
-
 import "../../style/vendor/bootstrap/css/bootstrap.min.css";
 import "../../style/fonts/font-awesome-4.7.0/css/font-awesome.min.css";
 import "../../style/vendor/animate/animate.css";
@@ -22,15 +21,17 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
 
   
-  useEffect(() => {
-    localStorage.removeItem("token");
-  }, []);
 
   const handleLogin = async () => {
     try {
       const result: LoginResponse = await login(email, password);
       localStorage.setItem("token", result.token);
       navigate("/home"); 
+      notification.success({
+          message: "Login Success",
+          description: "Login successfully!",
+          placement: "topRight",
+        });
     } catch (err: any) {
       notification.error({
         message: "Login Failed",

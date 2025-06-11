@@ -11,7 +11,7 @@ import SideBar from "../../components/SideBar";
 import type { User } from "../../interfaces/interfaces";
 import LoadingOverlay from "../../components/LoadingOverlay";
 
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 export default function HomePage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -173,26 +173,38 @@ export default function HomePage() {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const status = await deleteUser(id);
-      fetchUsers();
-      if (status === 204) {
-        notification.success({
-          message: "User Deleted",
-          description: "The user has been successfully deleted!",
-          placement: "topRight",
-        });
-      }
-    } catch (err) {
-      notification.error({
-        message: "Error Deleting User",
-        description: "There was an error deleting the user.",
-        placement: "topRight",
+        Modal.confirm({
+        title: 'Are you sure you want to delete this user?',
+        content: 'This action cannot be undone.',
+        okText: 'Yes, Delete',
+        cancelText: 'No, Cancel',
+        onOk: async () => {
+          setIsLoading(true);
+          try {
+            const status = await deleteUser(id);
+            fetchUsers();
+            if (status === 204) {
+              notification.success({
+                message: "User Deleted",
+                description: "The user has been successfully deleted!",
+                placement: "topRight",
+              });
+            }
+          } catch (err) {
+            notification.error({
+              message: "Error Deleting User",
+              description: "There was an error deleting the user.",
+              placement: "topRight",
+            });
+          } finally {
+            setIsLoading(false);
+          }
+        },
+        onCancel() {
+          console.log('Cancel deletion');
+        }
       });
-    } finally {
-    setIsLoading(false); 
-    }
+
   };
 
   const toggleSidebar = () => {
@@ -246,9 +258,6 @@ export default function HomePage() {
           />
         </Modal>
 
-        <Footer style={{ textAlign: "center" }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
       </Layout>
     </Layout>
   );

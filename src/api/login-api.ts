@@ -96,3 +96,22 @@ export const deleteUser = async (id: number): Promise<number> => {
   });
   return response.status;
 };
+
+export const getUserById = async (id: number): Promise<any> => {
+  try {
+    const response: AxiosResponse = await axios.get(`${reqresApiUrl}/users/${id}`, {
+      headers: {
+        "x-api-key": "reqres-free-v1",
+      },
+    });
+
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error("Error fetching user by ID:", e.message);
+    } else {
+      console.error("Error fetching user by ID:", e);
+    }
+    throw e;
+  }
+};

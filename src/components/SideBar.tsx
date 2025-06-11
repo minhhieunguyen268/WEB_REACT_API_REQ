@@ -2,7 +2,7 @@
 import React from 'react';
 import { Layout, Menu, Button } from 'antd';
 import { UserOutlined, LogoutOutlined, UploadOutlined, SwapOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const { Sider } = Layout;
 
@@ -12,7 +12,20 @@ interface SideBarProps {
   toggleSidebar: () => void;
 }
 
+localStorage.removeItem("token");
+
 const SideBar: React.FC<SideBarProps> = ({ collapseds, toggleSidebar }) => {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Remove token from localStorage
+    localStorage.removeItem("token");
+    
+    // Optionally, you can redirect the user to the login page or home page
+    navigate('/');
+  };
+  
   const items = [
     { key: '1', icon: <UserOutlined />, label: 'Users' },
     { key: '2', icon: <UploadOutlined />, label: 'Upload' },
@@ -20,7 +33,7 @@ const SideBar: React.FC<SideBarProps> = ({ collapseds, toggleSidebar }) => {
       key: '3',
       icon: <LogoutOutlined />,
       label: (
-        <Link to="/">Logout</Link>
+        <span onClick={handleLogout}>Logout</span>
       ),
     },
   ];
