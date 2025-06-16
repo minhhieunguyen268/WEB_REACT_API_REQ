@@ -8,11 +8,10 @@ interface UserFormProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   onSubmit: (values: { name: string; job: string }) => void;
-  isEditMode: boolean;
   form: any;
 }
 
-const UserForm: React.FC<UserFormProps> = ({ user, setUser, onSubmit, isEditMode, form }) => {
+const UserForm: React.FC<UserFormProps> = ({ user, setUser, onSubmit, form }) => {
   return (
     <Form form={form} onFinish={onSubmit}>
       <Form.Item
@@ -45,7 +44,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, setUser, onSubmit, isEditMode
 
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          {isEditMode ? "Update User" : "Create User"}
+          Create User
         </Button>
       </Form.Item>
     </Form>

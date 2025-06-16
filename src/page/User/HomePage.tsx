@@ -7,6 +7,7 @@ import {
   deleteUser,
 } from "../../api/login-api";
 import UserForm from "../../components/UserForm";
+import UpdateForm from "../../components/UpdateForm";
 import SideBar from "../../components/SideBar";
 import type { User } from "../../interfaces/interfaces";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -17,6 +18,7 @@ export default function HomePage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newUser, setNewUser] = useState<User | null>(null);
+  // const [userId, setuserId] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -25,7 +27,7 @@ export default function HomePage() {
   useEffect(() => {
     fetchUsers();
   }, []);
-
+  
   const columns = [
     {
       title: "ID",
@@ -87,20 +89,26 @@ export default function HomePage() {
   };
 
   const editUser = (user: User) => {
-    setNewUser(user);
+    
+    // setuserId(user.id ?? 0);
     setIsEditModalVisible(true);
+    setNewUser(user)
+  };
+
+   const addUser = () => {
+    form.resetFields();
+    setIsModalVisible(true)
   };
 
   const handleCancel = () => {
     if (isEditModalVisible) {
       setNewUser(null);
-      setIsEditModalVisible(false);
-      form.resetFields();
+      setIsEditModalVisible(false); 
     }
 
     if (isModalVisible) {
       setIsModalVisible(false);
-      form.resetFields();
+      //form.resetFields();
     }
   };
 
@@ -218,7 +226,7 @@ export default function HomePage() {
         <Content style={{ padding: "50px" }}>
           <Space style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h1>Users List</h1>
-            <Button type="primary" onClick={() => setIsModalVisible(true)}>
+            <Button type="primary" onClick={() => addUser()}>
               Add User
             </Button>
           </Space>
@@ -238,7 +246,6 @@ export default function HomePage() {
             user={newUser}
             setUser={setNewUser}
             onSubmit={handleCreateUser}
-            isEditMode={false}
             form={form}
           />
         </Modal>
@@ -249,15 +256,12 @@ export default function HomePage() {
           onCancel={handleCancel}
           footer={null}
         >
-          <UserForm
+          <UpdateForm
             user={newUser}
-            setUser={setNewUser}
             onSubmit={handleUpdateUser}
-            isEditMode={true}
             form={form}
           />
         </Modal>
-
       </Layout>
     </Layout>
   );

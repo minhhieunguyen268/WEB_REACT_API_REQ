@@ -84,6 +84,8 @@ export const updateUser = async (id: number, userData: User): Promise<AxiosRespo
   const response: AxiosResponse<User, any> = await axios.put(`${reqresApiUrl}/users/${id}`, userData, {
     headers,
   });
+  
+  console.log(response);
   return response;
 };
 
